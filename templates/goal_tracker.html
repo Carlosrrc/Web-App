@@ -1,1 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goal Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Set Your Financial Goals</h2>
+        <form action="/goal_tracker" method="post">
+            <input type="text" name="income" placeholder="Enter your income" required>
+            <input type="text" name="expenses" placeholder="Enter your expenses" required>
+            <input type="text" name="goal" placeholder="Enter your financial goal" required>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+</html>
 
