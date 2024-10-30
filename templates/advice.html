@@ -1,1 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Advice - Financial App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .main-container {
+            background-color: #1f2937;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            margin: auto;
+            text-align: center;
+        }
+        .title-large {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #14b8a6;
+            margin-bottom: 1.5rem;
+        }
+        .nav-button {
+            padding: 14px 28px;
+            font-size: 1.125rem;
+            border-radius: 9999px;
+            background-color: #14b8a6;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .nav-button:hover {
+            background-color: #0d9488;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 min-h-screen flex items-center justify-center">
+
+    <div class="main-container">
+        <h2 class="title-large">Financial Advice</h2>
+        <h1 class="text-2xl font-semibold text-blue-400 mb-6">Your Personalized Advice</h1>
+        <p class="text-lg text-gray-300 mb-8">{{ financial_advice }}</p>
+
+        <!-- Navigation Buttons -->
+        <a href="/" class="nav-button">Back to Home</a>
+        <a href="/goal_tracker" class="nav-button">Back to Goal Tracker</a>
+    </div>
+
+</body>
+</html>
+
+
+
+
+
+
+
 

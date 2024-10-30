@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Income & Expenses - Financial App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .main-container {
+            background-color: #1f2937;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            margin: auto;
+            text-align: center;
+        }
+        .title-large {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #14b8a6;
+            margin-bottom: 1rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid white;
+            background-color: #374151;
+            color: #f3f4f6;
+            margin-top: 0.5rem;
+        }
+        .add-button {
+            padding: 0.3rem 1rem;
+            font-size: 0.875rem;
+            font-weight: bold;
+            color: white;
+            background-color: #14b8a6;
+            border: none;
+            border-radius: 9999px;
+            margin-top: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .add-button:hover {
+            background-color: #0d9488;
+            transform: scale(1.05);
+        }
+        .submit-button {
+            padding: 0.7rem 1.5rem;
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: white;
+            background-color: #14b8a6;
+            border: none;
+            border-radius: 9999px;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .submit-button:hover {
+            background-color: #0d9488;
+            transform: scale(1.05);
+        }
+        .entry-list, .total-display {
+            text-align: left;
+            color: white;
+            margin-top: 1rem;
+        }
+        /* Added margin below each button for spacing */
+        .add-button + label {
+            margin-top: 1rem;
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 min-h-screen flex items-center justify-center">
+
+    <div class="main-container">
+        <h2 class="title-large">Income & Expenses</h2>
+        
+        <form action="/income_expenses" method="POST">
+            <!-- Add Income Stream -->
+            <label for="income">Add Income Stream:</label>
+            <input type="text" id="income" name="income_description" placeholder="Description" required class="form-input">
+            <input type="number" id="income_amount" name="income_amount" placeholder="Amount" required class="form-input">
+            <button type="button" onclick="addIncome()" class="add-button">Add Income</button>
+
+            <!-- Add Expense -->
+            <label for="expenses">Add Expense:</label>
+            <input type="text" id="expense" name="expense_description" placeholder="Description" required class="form-input">
+            <input type="number" id="expense_amount" name="expense_amount" placeholder="Amount" required class="form-input">
+            <button type="button" onclick="addExpense()" class="add-button">Add Expense</button>
+
+            <!-- Display Lists of Income and Expenses -->
+            <div class="entry-list" id="income-list">
+                <h3>Income Streams:</h3>
+            </div>
+            <div class="entry-list" id="expense-list">
+                <h3>Expenses:</h3>
+            </div>
+
+            <!-- Total Display -->
+            <div class="total-display">
+                <p><strong>Total Income:</strong> $<span id="total-income">0</span></p>
+                <p><strong>Total Expenses:</strong> $<span id="total-expenses">0</span></p>
+            </div>
+
+            <!-- Save and Continue Buttons -->
+            <button type="submit" class="submit-button">Save</button>
+            <button type="button" onclick="window.location.href='/goal_tracker'" class="submit-button">Continue to Goal Tracker</button>
+            <a href="/" class="nav-button">Home</a>
+        </form>
+    </div>
+
+    <script>
+        let incomeList = [];
+        let expenseList = [];
+
+        function addIncome() {
+            const description = document.getElementById('income').value;
+            const amount = parseFloat(document.getElementById('income_amount').value);
+            if (description && amount) {
+                incomeList.push({ description, amount });
+                updateIncomeList();
+                calculateTotal('income');
+            }
+        }
+
+        function addExpense() {
+            const description = document.getElementById('expense').value;
+            const amount = parseFloat(document.getElementById('expense_amount').value);
+            if (description && amount) {
+                expenseList.push({ description, amount });
+                updateExpenseList();
+                calculateTotal('expense');
+            }
+        }
+
+        function updateIncomeList() {
+            const list = document.getElementById('income-list');
+            list.innerHTML = '<h3>Income Streams:</h3>';
+            incomeList.forEach((income, index) => {
+                const item = document.createElement('p');
+                item.innerHTML = `${index + 1}. ${income.description}: $${income.amount}`;
+                list.appendChild(item);
+            });
+        }
+
+        function updateExpenseList() {
+            const list = document.getElementById('expense-list');
+            list.innerHTML = '<h3>Expenses:</h3>';
+            expenseList.forEach((expense, index) => {
+                const item = document.createElement('p');
+                item.innerHTML = `${index + 1}. ${expense.description}: $${expense.amount}`;
+                list.appendChild(item);
+            });
+        }
+
+        function calculateTotal(type) {
+            let total = 0;
+            if (type === 'income') {
+                total = incomeList.reduce((sum, income) => sum + income.amount, 0);
+                document.getElementById('total-income').textContent = total.toFixed(2);
+            } else if (type === 'expense') {
+                total = expenseList.reduce((sum, expense) => sum + expense.amount, 0);
+                document.getElementById('total-expenses').textContent = total.toFixed(2);
+            }
+        }
+    </script>
+
+</body>
+</html>
+
+
+
+
