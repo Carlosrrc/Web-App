@@ -3,55 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial App - Home</title>
+    <title>Smart Finances - Financial Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
-        .main-container {
+        /* Full-width layout for maximum screen use */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #111827;
+            color: #f3f4f6;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #14b8a6;
+            margin: 2rem 0;
+        }
+
+        /* Full-width grid layout */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Three equal columns */
+            grid-gap: 20px; /* Small gap between boxes */
+            width: 100%; /* Full viewport width */
+            max-width: 1600px; /* Limit max width to prevent extreme stretching on very large screens */
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        /* Box styling */
+        .box {
             background-color: #1f2937;
             padding: 2rem;
             border-radius: 12px;
             box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            margin: auto;
             text-align: center;
+            width: 100%;
+            min-height: 350px;
         }
+
+        /* Title font size */
         .title-large {
-            font-size: 2.5rem;
-            font-weight: 800;
+            font-size: 1.75rem;
+            font-weight: bold;
             color: #14b8a6;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
-        .nav-button {
-            padding: 14px 28px;
-            font-size: 1.125rem;
-            border-radius: 9999px;
+
+        /* Form styling */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 6px;
+            background-color: #374151;
+            color: #f3f4f6;
+            border: 1px solid #6b7280;
+            margin-top: 0.5rem;
+        }
+
+        .add-button {
+            font-weight: bold;
             background-color: #14b8a6;
-            color: white;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 1rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
             transition: background-color 0.3s, transform 0.2s;
+            margin-top: 1rem;
+            width: 100%;
         }
-        .nav-button:hover {
+
+        .add-button:hover {
             background-color: #0d9488;
             transform: scale(1.05);
         }
+
+        /* Adjust entry list layout */
+        .entry-list {
+            text-align: left;
+            margin-top: 1.5rem;
+            padding-left: 10px;
+        }
+
+        .total-display {
+            font-weight: bold;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        /* Advice and Graph Boxes spanning full width */
+        .advice-box, .graph-box {
+            grid-column: span 3;
+            min-height: 200px;
+        }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 min-h-screen flex items-center justify-center">
+<body>
 
-    <div class="main-container">
-        <h2 class="title-large">Financial App</h2>
-        <h1 class="text-2xl font-semibold text-blue-400 mb-6">Welcome to the Financial Web App</h1>
+    <!-- Page Title -->
+    <h1 class="page-title">Smart Finances Dashboard</h1>
 
-        <!-- Navigation Buttons -->
-        <a href="/income_expenses" class="nav-button">Set Income & Expenses</a>
-        <a href="/goal_tracker" class="nav-button">Set Financial Goals</a>
-        <a href="/financial_advice" class="nav-button">Financial Advice</a>
+    <div class="dashboard-container">
+        <!-- Income Section -->
+        <div class="box">
+            <h2 class="title-large">Income</h2>
+            <form id="income-form">
+                <div class="form-group">
+                    <label for="income">Description</label>
+                    <input type="text" id="income" name="income_description" placeholder="Description" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="income_amount">Amount</label>
+                    <input type="number" id="income_amount" name="income_amount" placeholder="Amount" class="form-input" required>
+                </div>
+                <button type="button" onclick="addIncome()" class="add-button">Add Income</button>
+
+                <div class="total-display">
+                    <p><strong>Total Income:</strong> $<span id="total-income">0</span></p>
+                </div>
+                <div class="entry-list" id="income-list">
+                    <h3>Income Streams:</h3>
+                </div>
+            </form>
+        </div>
+
+        <!-- Expenses Section -->
+        <div class="box">
+            <h2 class="title-large">Expenses</h2>
+            <form id="expense-form">
+                <div class="form-group">
+                    <label for="expense">Description</label>
+                    <input type="text" id="expense" name="expense_description" placeholder="Description" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="expense_amount">Amount</label>
+                    <input type="number" id="expense_amount" name="expense_amount" placeholder="Amount" class="form-input" required>
+                </div>
+                <button type="button" onclick="addExpense()" class="add-button">Add Expense</button>
+
+                <div class="total-display">
+                    <p><strong>Total Expenses:</strong> $<span id="total-expenses">0</span></p>
+                </div>
+                <div class="entry-list" id="expense-list">
+                    <h3>Expenses:</h3>
+                </div>
+            </form>
+        </div>
+
+        <!-- Goal Tracker Section -->
+        <div class="box">
+            <h2 class="title-large">Goal Tracker</h2>
+            <form id="goal-tracker-form">
+                <div class="form-group">
+                    <label for="goal">Goal Description</label>
+                    <input type="text" id="goal" name="goal" placeholder="E.g., Save $5,000 for emergency fund" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="goal_amount">Target Amount</label>
+                    <input type="number" id="goal_amount" name="goal_amount" placeholder="Target Amount" class="form-input" required>
+                </div>
+                <button type="button" onclick="addGoal()" class="add-button">Add Goal</button>
+
+                <div class="entry-list" id="goal-list">
+                    <h3>Goals:</h3>
+                </div>
+            </form>
+        </div>
+
+        <!-- Financial Advice Section -->
+        <div class="box advice-box">
+            <h2 class="title-large">Financial Advice</h2>
+            <p id="financial-advice">Enter your income, expenses, and goals to receive personalized advice.</p>
+        </div>
+
+        <!-- Graph Section for Visual Summary -->
+        <div class="box graph-box">
+            <h2 class="title-large">Financial Summary Chart</h2>
+            <p>Interactive graph for income and expense breakdown will display here.</p>
+        </div>
     </div>
 
+    <script>
+        let incomeList = [];
+        let expenseList = [];
+        let goalList = [];
+
+        function addIncome() {
+            const description = document.getElementById('income').value;
+            const amount = parseFloat(document.getElementById('income_amount').value);
+            if (description && amount) {
+                incomeList.push({ description, amount });
+                updateFinancials();
+                displayIncome();
+                document.getElementById('income').value = '';
+                document.getElementById('income_amount').value = '';
+            }
+        }
+
+        function addExpense() {
+            const description = document.getElementById('expense').value;
+            const amount = parseFloat(document.getElementById('expense_amount').value);
+            if (description && amount) {
+                expenseList.push({ description, amount });
+                updateFinancials();
+                displayExpenses();
+                document.getElementById('expense').value = '';
+                document.getElementById('expense_amount').value = '';
+            }
+        }
+
+        function addGoal() {
+            const goalDesc = document.getElementById('goal').value;
+            const goalAmt = parseFloat(document.getElementById('goal_amount').value);
+            if (goalDesc && goalAmt) {
+                goalList.push({ goalDesc, goalAmt });
+                displayGoals();
+                document.getElementById('goal').value = '';
+                document.getElementById('goal_amount').value = '';
+            }
+        }
+
+        function updateFinancials() {
+            let totalIncome = incomeList.reduce((sum, income) => sum + income.amount, 0);
+            let totalExpenses = expenseList.reduce((sum, expense) => sum + expense.amount, 0);
+            document.getElementById('total-income').textContent = totalIncome.toFixed(2);
+            document.getElementById('total-expenses').textContent = totalExpenses.toFixed(2);
+
+            let adviceText = `Based on your inputs, consider saving 20% of your income. Total income is $${totalIncome.toFixed(2)}, while expenses are $${totalExpenses.toFixed(2)}.`;
+            document.getElementById('financial-advice').textContent = adviceText;
+        }
+
+        function displayIncome() {
+            const list = document.getElementById('income-list');
+            list.innerHTML = '';
+            incomeList.forEach((income, index) => {
+                const item = document.createElement('p');
+                item.textContent = `${index + 1}. ${income.description}: $${income.amount}`;
+                list.appendChild(item);
+            });
+        }
+
+        function displayExpenses() {
+            const list = document.getElementById('expense-list');
+            list.innerHTML = '';
+            expenseList.forEach((expense, index) => {
+                const item = document.createElement('p');
+                item.textContent = `${index + 1}. ${expense.description}: $${expense.amount}`;
+                list.appendChild(item);
+            });
+        }
+
+        function displayGoals() {
+            const goalListDiv = document.getElementById('goal-list');
+            goalListDiv.innerHTML = '';
+            goalList.forEach((goal, index) => {
+                const item = document.createElement('p');
+                item.textContent = `${index + 1}. ${goal.goalDesc}: $${goal.goalAmt}`;
+                goalListDiv.appendChild(item);
+            });
+        }
+    </script>
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 
