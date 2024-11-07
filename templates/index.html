@@ -118,17 +118,17 @@
             <h2 class="title-large">Income</h2>
             <form id="income-form">
                 <div class="form-group">
-                    <label for="income">Description</label>
+                    <label for="income">Monthly Income Description</label>
                     <input type="text" id="income" name="income_description" placeholder="Description" class="form-input" required>
                 </div>
                 <div class="form-group">
-                    <label for="income_amount">Amount</label>
+                    <label for="income_amount">Monthly Amount</label>
                     <input type="number" id="income_amount" name="income_amount" placeholder="Amount" class="form-input" required>
                 </div>
                 <button type="button" onclick="addIncome()" class="add-button">Add Income</button>
 
                 <div class="total-display">
-                    <p><strong>Total Income:</strong> $<span id="total-income">0</span></p>
+                    <p><strong>Total Income:</strong> $<span id="total-income">0.00</span></p>
                 </div>
                 <div class="entry-list" id="income-list">
                     <h3>Income Streams:</h3>
@@ -141,17 +141,17 @@
             <h2 class="title-large">Expenses</h2>
             <form id="expense-form">
                 <div class="form-group">
-                    <label for="expense">Description</label>
+                    <label for="expense">Monthly Expense Description</label>
                     <input type="text" id="expense" name="expense_description" placeholder="Description" class="form-input" required>
                 </div>
                 <div class="form-group">
-                    <label for="expense_amount">Amount</label>
+                    <label for="expense_amount">Monthly Amount</label>
                     <input type="number" id="expense_amount" name="expense_amount" placeholder="Amount" class="form-input" required>
                 </div>
                 <button type="button" onclick="addExpense()" class="add-button">Add Expense</button>
 
                 <div class="total-display">
-                    <p><strong>Total Expenses:</strong> $<span id="total-expenses">0</span></p>
+                    <p><strong>Total Expenses:</strong> $<span id="total-expenses">0.00</span></p>
                 </div>
                 <div class="entry-list" id="expense-list">
                     <h3>Expenses:</h3>
@@ -182,8 +182,20 @@
         <!-- Financial Advice Section -->
         <div class="box advice-box">
             <h2 class="title-large">Financial Advice</h2>
-            <p id="financial-advice">Enter your income, expenses, and goals to receive personalized advice.</p>
+            <p>Enter your income, expenses, and goals to receive personalized advice.</p>
+            <button type="button" onclick="getFinancialAdvice()" class="add-button narrower-button">Get Financial Advice</button>
+            <p id="financial-advice"></p>
         </div>
+
+        <style>
+            /* Styling for the narrower button */
+            .narrower-button {
+                width: 550px; /* Adjust the width to make it narrower sideways */
+                padding: 0.8rem 1rem; /* Smaller padding */
+                font-size: 1.4rem; /* Smaller font size */
+            }
+        </style>
+
 
         <!-- Graph Section for Visual Summary -->
         <div class="box graph-box">
@@ -206,6 +218,13 @@
                 displayIncome();
                 document.getElementById('income').value = '';
                 document.getElementById('income_amount').value = '';
+
+                // Send to server
+                fetch('/add_income', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ income_description: description, income_amount: amount })
+                }).catch(error => console.error('Error:', error));
             }
         }
 
@@ -218,6 +237,13 @@
                 displayExpenses();
                 document.getElementById('expense').value = '';
                 document.getElementById('expense_amount').value = '';
+
+                // Send to server
+                fetch('/add_expense', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ expense_description: description, expense_amount: amount })
+                }).catch(error => console.error('Error:', error));
             }
         }
 
@@ -229,6 +255,13 @@
                 displayGoals();
                 document.getElementById('goal').value = '';
                 document.getElementById('goal_amount').value = '';
+
+                // Send to server
+                fetch('/add_goal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ goal: goalDesc, goal_amount: goalAmt })
+                }).catch(error => console.error('Error:', error));
             }
         }
 
@@ -237,9 +270,6 @@
             let totalExpenses = expenseList.reduce((sum, expense) => sum + expense.amount, 0);
             document.getElementById('total-income').textContent = totalIncome.toFixed(2);
             document.getElementById('total-expenses').textContent = totalExpenses.toFixed(2);
-
-            let adviceText = `Based on your inputs, consider saving 20% of your income. Total income is $${totalIncome.toFixed(2)}, while expenses are $${totalExpenses.toFixed(2)}.`;
-            document.getElementById('financial-advice').textContent = adviceText;
         }
 
         function displayIncome() {
@@ -247,7 +277,7 @@
             list.innerHTML = '';
             incomeList.forEach((income, index) => {
                 const item = document.createElement('p');
-                item.textContent = `${index + 1}. ${income.description}: $${income.amount}`;
+                item.textContent = `${index + 1}. ${income.description}: $${income.amount.toFixed(2)}`;
                 list.appendChild(item);
             });
         }
@@ -257,7 +287,7 @@
             list.innerHTML = '';
             expenseList.forEach((expense, index) => {
                 const item = document.createElement('p');
-                item.textContent = `${index + 1}. ${expense.description}: $${expense.amount}`;
+                item.textContent = `${index + 1}. ${expense.description}: $${expense.amount.toFixed(2)}`;
                 list.appendChild(item);
             });
         }
@@ -267,13 +297,49 @@
             goalListDiv.innerHTML = '';
             goalList.forEach((goal, index) => {
                 const item = document.createElement('p');
-                item.textContent = `${index + 1}. ${goal.goalDesc}: $${goal.goalAmt}`;
+                item.textContent = `${index + 1}. ${goal.goalDesc}: $${goal.goalAmt.toFixed(2)}`;
                 goalListDiv.appendChild(item);
+            });
+        }
+
+        function getFinancialAdvice() {
+            console.log("Income List:", incomeList);
+            console.log("Expense List:", expenseList);
+            console.log("Goal List:", goalList);
+
+            fetch("/financial_advice", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    income: incomeList,
+                    expenses: expenseList,
+                    goals: goalList
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.advice) {
+                    document.getElementById('financial-advice').innerHTML = data.advice;
+                } else {
+                    document.getElementById('financial-advice').textContent = data.error || "Error generating advice.";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById('financial-advice').textContent = "An error occurred. Please try again.";
             });
         }
     </script>
 </body>
 </html>
+
+
+
+
+
+
 
 
 
