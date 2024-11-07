@@ -113,43 +113,45 @@ def financial_advice():
         goal_response = model.generate_content(goal_prompt).text
 
         # Updated HTML-based formatting for distinct sections, with improved readability
-        formatted_response = f"""
-        <div style='font-family: Arial, sans-serif; font-size: 18px; line-height: 1.8; color: #333; text-align: left;'>
+        formatted_response = (
+            f"""
+            <div style='font-family: Arial, sans-serif; font-size: 18px; line-height: 1.8; color: #333; text-align: left;'>
 
-            <h2 style='color: #1a73e8; margin-bottom: 20px;'>Your Personalized Financial Advice</h2>
+                <h2 style='color: #1a73e8; margin-bottom: 20px;'>Your Personalized Financial Advice</h2>
 
-            <!-- Income Analysis Box -->
-            <div style='border: 2px solid #4a90e2; border-radius: 8px; padding: 20px; margin-bottom: 25px; background-color: #d0e7fd; text-align: left;'>
-                <h3 style='color: #2b6cb0; margin-bottom: 15px;'>Income Analysis</h3>
-                <p>{income_response.replace('#', '').replace('*', '').replace('\n', '</p><p>')}</p>
+                <!-- Income Analysis Box -->
+                <div style='border: 2px solid #4a90e2; border-radius: 8px; padding: 20px; margin-bottom: 25px; background-color: #d0e7fd; text-align: left;'>
+                    <h3 style='color: #2b6cb0; margin-bottom: 15px;'>Income Analysis</h3>
+                    <p>{income_response.replace('#', '').replace('*', '').replace('\n', '</p><p>')}</p>
+                </div>
+
+                <!-- Expense Analysis Box -->
+                <div style='border: 2px solid #ff7043; border-radius: 8px; padding: 20px; margin-bottom: 25px; background-color: #ffe0b2; text-align: left;'>
+                    <h3 style='color: #ff7043; margin-bottom: 15px;'>Expense Analysis</h3>
+                    <p>{expense_response.replace('#', '').replace('*', '').replace('\n', '</p><p>')}</p>
+                </div>
+
+                <!-- Savings Plan Box -->
+                <div style='border: 2px solid #4caf50; border-radius: 8px; padding: 20px; margin-bottom: 25px; background-color: #c8e6c9; text-align: left;'>
+                    <h3 style='color: #4caf50; margin-bottom: 15px;'>Savings Plan</h3>
+                    <p>{savings_response.replace('#', '').replace('*', '').replace('\n', '</p><p>')}</p>
+                </div>
+
+                <!-- Investment Advice Box -->
+                <div style='border: 2px solid #7e57c2; border-radius: 8px; padding: 20px; margin-bottom: 25px; background-color: #d1c4e9; text-align: left;'>
+                    <h3 style='color: #7e57c2; margin-bottom: 15px;'>Investment Advice</h3>
+                    <p>{investment_response.replace('#', '').replace('*', '').replace('\n', '</p><p>')}</p>
+                </div>
+
+                <!-- Goal-Specific Financial Plan Box -->
+                <div style='border: 2px solid #ffa726; border-radius: 8px; padding: 20px; margin-bottom: 25px; background-color: #ffe0b2; text-align: left;'>
+                    <h3 style='color: #ffa726; margin-bottom: 15px;'>Goal-Specific Financial Plan</h3>
+                    <p>{goal_response.replace('#', '').replace('*', '').replace('\n', '</p><p>')}</p>
+                </div>
+
             </div>
-
-            <!-- Expense Analysis Box -->
-            <div style='border: 2px solid #ff7043; border-radius: 8px; padding: 20px; margin-bottom: 25px; background-color: #ffe0b2; text-align: left;'>
-                <h3 style='color: #ff7043; margin-bottom: 15px;'>Expense Analysis</h3>
-                <p>{expense_response.replace('#', '').replace('*', '').replace('\n', '</p><p>')}</p>
-            </div>
-
-            <!-- Savings Plan Box -->
-            <div style='border: 2px solid #4caf50; border-radius: 8px; padding: 20px; margin-bottom: 25px; background-color: #c8e6c9; text-align: left;'>
-                <h3 style='color: #4caf50; margin-bottom: 15px;'>Savings Plan</h3>
-                <p>{savings_response.replace('#', '').replace('*', '').replace('\n', '</p><p>')}</p>
-            </div>
-
-            <!-- Investment Advice Box -->
-            <div style='border: 2px solid #7e57c2; border-radius: 8px; padding: 20px; margin-bottom: 25px; background-color: #d1c4e9; text-align: left;'>
-                <h3 style='color: #7e57c2; margin-bottom: 15px;'>Investment Advice</h3>
-                <p>{investment_response.replace('#', '').replace('*', '').replace('\n', '</p><p>')}</p>
-            </div>
-
-            <!-- Goal-Specific Financial Plan Box -->
-            <div style='border: 2px solid #ffa726; border-radius: 8px; padding: 20px; margin-bottom: 25px; background-color: #ffe0b2; text-align: left;'>
-                <h3 style='color: #ffa726; margin-bottom: 15px;'>Goal-Specific Financial Plan</h3>
-                <p>{goal_response.replace('#', '').replace('*', '').replace('\n', '</p><p>')}</p>
-            </div>
-
-        </div>
-        """
+            """
+        )
         return jsonify({"advice": formatted_response})
     except AttributeError:
         return jsonify({"error": "Error: The method generate_content may not be supported in this library version."})
