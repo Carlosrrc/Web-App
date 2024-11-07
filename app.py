@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
+import os
 
 app = Flask(__name__)
 
 # Set the API key directly in the code to avoid issues with the environment variable
-api_key = 'GOOGLE-API'  # Replace with your actual API key
+api_key = os.getenv('GOOGLE_API_KEY')  # Replace with your actual API key
 genai.configure(api_key=api_key)
 
 # Temporary storage for user data
