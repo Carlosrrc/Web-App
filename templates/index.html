@@ -105,6 +105,21 @@
             grid-column: span 3;
             min-height: 200px;
         }
+
+        .graph-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .graph-section {
+            width: 45%;
+        }
+
+        .chart-image {
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -196,11 +211,27 @@
             }
         </style>
 
-
         <!-- Graph Section for Visual Summary -->
         <div class="box graph-box">
-            <h2 class="title-large">Financial Summary Chart</h2>
-            <p>Interactive graph for income and expense breakdown will display here.</p>
+            <h2 class="title-large">Financial Summary Charts</h2>
+            <p>Click the button below to generate financial summary charts based on your input data.</p>
+            <button type="button" onclick="generateFinancialCharts()" class="add-button narrower-button">Generate Financial Charts</button>
+
+            <div class="graph-container">
+                <!-- Graph Containers Side by Side -->
+                <div class="graph-section">
+                    <div id="financial-chart-placeholder" style="width: 100%; height: 300px; background-color: #1f2937; color: #6b7280; display: flex; justify-content: center; align-items: center;">
+                        <p>Chart will appear here after generation</p>
+                    </div>
+                    <img id="financial-chart" src="" alt="Financial Summary Chart" class="chart-image" style="display: none;">
+                </div>
+                <div class="graph-section">
+                    <div id="income-expense-chart-placeholder" style="width: 100%; height: 300px; background-color: #1f2937; color: #6b7280; display: flex; justify-content: center; align-items: center;">
+                        <p>Chart will appear here after generation</p>
+                    </div>
+                    <img id="income-expense-chart" src="" alt="Income vs Expenses Chart" class="chart-image" style="display: none;">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -330,6 +361,19 @@
                 console.error("Error:", error);
                 document.getElementById('financial-advice').textContent = "An error occurred. Please try again.";
             });
+        }
+
+        function generateFinancialCharts() {
+            // Remove placeholders and show the chart images
+            document.getElementById('financial-chart-placeholder').style.display = 'none';
+            document.getElementById('income-expense-chart-placeholder').style.display = 'none';
+
+            document.getElementById('financial-chart').style.display = 'block';
+            document.getElementById('income-expense-chart').style.display = 'block';
+
+            // Update both charts at the same time when clicking the button
+            document.getElementById('financial-chart').src = "/generate_plot?" + new Date().getTime();
+            document.getElementById('income-expense-chart').src = "/generate_income_expense_plot?" + new Date().getTime();
         }
     </script>
 </body>

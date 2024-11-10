@@ -1,6 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 import google.generativeai as genai
 import os
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
 
 app = Flask(__name__)
 
@@ -163,6 +166,134 @@ def financial_advice():
         return jsonify({"error": "Error: The method generate_content may not be supported in this library version."})
     except Exception as e:
         return jsonify({"error": str(e)})
+
+sns.set_theme(style="darkgrid")
+
+@app.route('/generate_plot')
+def generate_plot():
+    try:
+        if not user_data['income'] or not user_data['expenses']:
+            # If there's no income or expenses data
+            img = io.BytesIO()
+            fig, ax = plt.subplots()
+            fig.patch.set_facecolor('#1f2937')
+            ax.set_facecolor('#1f2937')
+            ax.text(0.5, 0.5, "No data available for plot generation.", fontsize=12, ha='center', va='center', color='white')
+            ax.axis('off')
+            plt.close()
+            img.seek(0)
+            return send_file(img, mimetype='image/png')
+
+        # Data for pie chart
+        total_income = sum(item['amount'] for item in user_data['income'])
+        total_expenses = sum(item['amount'] for item in user_data['expenses'])
+        remaining_income = total_income - total_expenses
+
+        # Ensure remaining income is not negative for proper visualization
+        if remaining_income < 0:
+            remaining_income = 0
+
+        labels = ['Total Income', 'Total Expenses', 'Savings']
+        sizes = [total_income, total_expenses, remaining_income]
+        colors = ['#4caf50', '#ff7043', '#7e57c2']
+
+        # Create the pie chart
+        fig, ax = plt.subplots()
+        wedges, texts, autotexts = ax.pie(
+            sizes,
+            labels=labels,
+            colors=colors,
+            autopct='%1.1f%%',
+            startangle=140,
+            textprops={'color': "white"}
+        )
+
+        # Adjust the color of labels and percentages for better visibility
+        for text in texts:
+            text.set_color('white')
+        for autotext in autotexts:
+            autotext.set_color('white')
+
+        # Set background and title color
+        fig.patch.set_facecolor('#1f2937')
+        ax.set_facecolor('#1f2937')
+        ax.axis('equal')  # Equal aspect ratio ensures the pie is drawn as a circle.
+        ax.set_title("Income, Expenses, and Savings Breakdown", color='white')
+
+        # Save plot to a BytesIO object
+        img = io.BytesIO()
+        plt.savefig(img, format='png', facecolor=fig.get_facecolor(), bbox_inches='tight')
+        img.seek(0)
+        plt.close()
+        return send_file(img, mimetype='image/png')
+
+    except Exception as e:
+        # Log the error and return an error message image
+        print(f"Error in generate_plot: {e}")
+        img = io.BytesIO()
+        fig, ax = plt.subplots()
+        fig.patch.set_facecolor('#1f2937')
+        ax.set_facecolor('#1f2937')
+        ax.text(0.5, 0.5, "Error generating plot.", fontsize=15, ha='center', va='center', color='red')
+        ax.axis('off')
+        plt.close()
+        img.seek(0)
+        return send_file(img, mimetype='image/png')
+
+
+@app.route('/generate_income_expense_plot')
+def generate_income_expense_plot():
+    try:
+        if not user_data['income'] or not user_data['expenses']:
+            img = io.BytesIO()
+            fig, ax = plt.subplots()
+            fig.patch.set_facecolor('#1f2937')
+            ax.set_facecolor('#1f2937')
+            ax.text(0.5, 0.5, "No data available for plot generation.", fontsize=12, ha='center', va='center', color='white')
+            ax.axis('off')
+            plt.close()
+            img.seek(0)
+            return send_file(img, mimetype='image/png')
+
+        income_descriptions = [item['description'] for item in user_data['income']]
+        income_amounts = [item['amount'] for item in user_data['income']]
+        expense_descriptions = [item['description'] for item in user_data['expenses']]
+        expense_amounts = [item['amount'] for item in user_data['expenses']]
+
+        descriptions = income_descriptions + expense_descriptions
+        amounts = income_amounts + expense_amounts
+        colors = ['#4caf50'] * len(income_amounts) + ['#ff7043'] * len(expense_amounts)
+
+        fig, ax = plt.subplots()
+        ax.bar(descriptions, amounts, color=colors)
+        fig.patch.set_facecolor('#1f2937')
+        ax.set_facecolor('#1f2937')
+        ax.set_xlabel('Categories', color='white')
+        ax.set_ylabel('Amount ($)', color='white', labelpad=20)  # Add padding to prevent cutoff
+        ax.set_title('Income vs Expenses Breakdown', color='white')
+        ax.tick_params(axis='x', colors='white', rotation=45)
+        ax.tick_params(axis='y', colors='white')
+
+        plt.tight_layout()  # Ensure that everything fits properly
+
+        img = io.BytesIO()
+        plt.savefig(img, format='png', facecolor=fig.get_facecolor(), bbox_inches='tight')
+        img.seek(0)
+        plt.close()
+        return send_file(img, mimetype='image/png')
+
+    except Exception as e:
+        print(f"Error in generate_income_expense_plot: {e}")
+        img = io.BytesIO()
+        fig, ax = plt.subplots()
+        fig.patch.set_facecolor('#1f2937')
+        ax.set_facecolor('#1f2937')
+        ax.text(0.5, 0.5, "Error generating plot.", fontsize=15, ha='center', va='center', color='red')
+        ax.axis('off')
+        plt.close()
+        img.seek(0)
+        return send_file(img, mimetype='image/png')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
