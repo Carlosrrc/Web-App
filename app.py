@@ -7,8 +7,8 @@ import io
 
 app = Flask(__name__)
 
-# Set the API key directly in the code to avoid issues with the environment variable
-api_key = os.getenv('GOOGLE_API_KEY')  # Replace with your actual API key
+
+api_key = os.getenv('GOOGLE_API_KEY')  # API Key saved in render environment
 genai.configure(api_key=api_key)
 
 # Temporary storage for user data
@@ -48,25 +48,25 @@ def add_goal():
 
 @app.route('/financial_advice', methods=['POST'])
 def financial_advice():
-    # Use enhanced default data if user data is empty (for easier testing)
-    if not user_data['income']:
-        user_data['income'] = [
-            {'description': 'Salary', 'amount': 5000.0},
-            {'description': 'Freelancing', 'amount': 1200.0},
-            {'description': 'Investments', 'amount': 800.0}
+    # This was used while testing, so we could adapt the model faster without wasting so much time inputing the data in the app
+    #if not user_data['income']:
+    #    user_data['income'] = [
+    #        {'description': 'Salary', 'amount': 5000.0},
+    #        {'description': 'Freelancing', 'amount': 1200.0},
+    #        {'description': 'Investments', 'amount': 800.0}
         ]
-    if not user_data['expenses']:
-        user_data['expenses'] = [
-            {'description': 'Rent', 'amount': 1500.0},
-            {'description': 'Utilities', 'amount': 300.0},
-            {'description': 'Groceries', 'amount': 600.0},
-            {'description': 'Entertainment', 'amount': 500.0}
+    #if not user_data['expenses']:
+    #    user_data['expenses'] = [
+    #        {'description': 'Rent', 'amount': 1500.0},
+    #        {'description': 'Utilities', 'amount': 300.0},
+    #        {'description': 'Groceries', 'amount': 600.0},
+    #        {'description': 'Entertainment', 'amount': 500.0}
         ]
-    if not user_data['goals']:
-        user_data['goals'] = [
-            {'description': 'Buy a Car', 'amount': 30000.0},
-            {'description': 'Vacation', 'amount': 5000.0},
-            {'description': 'Emergency Fund', 'amount': 10000.0}
+    #if not user_data['goals']:
+    #    user_data['goals'] = [
+    #        {'description': 'Buy a Car', 'amount': 30000.0},
+    #        {'description': 'Vacation', 'amount': 5000.0},
+    #        {'description': 'Emergency Fund', 'amount': 10000.0}
         ]
 
     total_income = sum(item['amount'] for item in user_data['income'])
@@ -80,7 +80,7 @@ def financial_advice():
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
 
-        # Generate distinct responses for each section with clear and direct prompts
+        # This generated distinct responses for each section with clear and direct prompts. 
         income_prompt = (
             f"Based on the following monthly income details: {income_details}, provide a straightforward income analysis. "
             f"Make suggestions for income growth or diversification that are practical. "
@@ -116,7 +116,7 @@ def financial_advice():
         )
         goal_response = model.generate_content(goal_prompt).text
 
-        # Updated HTML-based formatting for distinct sections, with improved readability
+        # HTML-based formatting for distinct sections
         formatted_response = """
         <div style='font-family: Arial, sans-serif; font-size: 18px; line-height: 1.8; color: #333; text-align: left;'>
 
