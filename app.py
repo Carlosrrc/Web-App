@@ -54,20 +54,20 @@ def financial_advice():
     #        {'description': 'Salary', 'amount': 5000.0},
     #        {'description': 'Freelancing', 'amount': 1200.0},
     #        {'description': 'Investments', 'amount': 800.0}
-        ]
+    #    ]
     #if not user_data['expenses']:
     #    user_data['expenses'] = [
     #        {'description': 'Rent', 'amount': 1500.0},
     #        {'description': 'Utilities', 'amount': 300.0},
     #        {'description': 'Groceries', 'amount': 600.0},
     #        {'description': 'Entertainment', 'amount': 500.0}
-        ]
+    #    ]
     #if not user_data['goals']:
     #    user_data['goals'] = [
     #        {'description': 'Buy a Car', 'amount': 30000.0},
     #        {'description': 'Vacation', 'amount': 5000.0},
     #        {'description': 'Emergency Fund', 'amount': 10000.0}
-        ]
+    #    ]
 
     total_income = sum(item['amount'] for item in user_data['income'])
     total_expenses = sum(item['amount'] for item in user_data['expenses'])
